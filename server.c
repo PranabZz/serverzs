@@ -16,7 +16,7 @@ int main(int argc, char const* argv[]){
 
   struct sockaddr_in address; // Making an address struct for sockaddr_in 
 
-  int opt = 1;
+  int opt = 1; // Used for optional ports if collied 
 
   int addr_len = sizeof(address);
   char buffer[1024] = {0}; // Buffer is used for sending data here we are using 1024 for 1mb
@@ -44,6 +44,7 @@ int main(int argc, char const* argv[]){
   address.sin_port = htons(PORT);
   
   // Binding
+  
   if(bind(socket_fd, (struct sockaddr*)&address,sizeof(address)) < 0){
     perror("Bind was unsucessfull");
     exit(EXIT_FAILURE);
@@ -57,7 +58,7 @@ int main(int argc, char const* argv[]){
   }
 
   // Creating a new socket ( mirroring to send or recive data after accepting the connection request from the client)
-
+  
   if((new_socket = accept(socket_fd, (struct sockaddr*)&address, (socklen_t*)&addr_len))<0){
     perror("Aceept failed");
     exit(EXIT_FAILURE);
@@ -69,11 +70,7 @@ int main(int argc, char const* argv[]){
   send(new_socket,message_server,strlen(message_server), 0);
 
   printf("Server message sent");
-
-  close(new_socket);
-
-  shutdown(socket_fd, SHUT_RDWR);
-
+ 
   return 0;
 
 
