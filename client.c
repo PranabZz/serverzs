@@ -34,14 +34,21 @@ int main(int argc,char const* argv[]){
     return -1;
   }
 
-  send(client_fd,message_client,strlen(message_client),0);
-  printf("Hello message send");
-  valread = read(client_fd,buffer,1024);
+  while(status > 0){
+    char* client;
+    printf("Enter the clients message");
+    scanf("%s",client);
 
-  printf("%s\n",buffer);
+    send(client_fd,client,strlen(client),0);
 
-  close(client_fd);
+    printf("\n Sent message to the server \n");
+    
+    valread = read(client_fd,buffer,1024);
 
+    printf("%s\n",buffer);
+
+    close(client_fd);
+  }
   return 0;
 
 }

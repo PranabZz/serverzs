@@ -64,13 +64,23 @@ int main(int argc, char const* argv[]){
     exit(EXIT_FAILURE);
   }
 
-  valread = read(new_socket, buffer, 1024);
-  printf("%s\n",buffer);
-  
-  send(new_socket,message_server,strlen(message_server), 0);
+  while(new_socket > 0){
 
-  printf("Server message sent");
- 
+    printf("/n Sever has been connected at port %d\n",PORT);
+    valread = read(new_socket, buffer, 1024);
+    printf("%s\n",buffer);
+  
+    char* server;
+    printf("Enter the message you want to send");
+    scanf("%s",server);
+
+
+    send(new_socket,server,strlen(server), 0);
+
+    printf("Server message sent");
+  }
+
+
   return 0;
 
 
