@@ -13,7 +13,7 @@ int main(int argc,char const* argv[]){
 
   struct sockaddr_in serv_addr;
 
-  char* message_client = "Hello from client";
+  char* message_client;
   char buffer[1024] = {0};
 
   if((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0 ){
@@ -34,21 +34,27 @@ int main(int argc,char const* argv[]){
     return -1;
   }
 
-  while(status > 0){
-    char* client;
-    printf("Enter the clients message");
-    scanf("%s",client);
+   printf("Connected to the server at port %d\n", PORT);
 
-    send(client_fd,client,strlen(client),0);
+    while (1) {
+        printf("Enter the client's message (type 'exit' to quit): ");
+        fgets(message_client, sizeof(buffer), stdin);
+        message_client[strcspn(message_client, "\n")] = '\0'; // Removing newline character from fgets
 
-    printf("\n Sent message to the server \n");
-    
-    valread = read(client_fd,buffer,1024);
+        if (strcmp(message_client, "exit") == 0) {
+            printf("Client is exiting...\n");
+            break;
+        }
 
-    printf("%s\n",buffer);
+        send(client_fd, message_client, strlen(message_client), 0);
 
-    close(client_fd);
-  }
+        valread = read(client_fd, buffer, 0);
+        buffer[valread] = '\0'; // Null-terminate the received buffer before printing
+        printf("Server: %s\n", buffer);
+    }
+
+    // Close the socket
+    close(client_fd);  
   return 0;
 
 }

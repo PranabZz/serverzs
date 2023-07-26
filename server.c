@@ -59,27 +59,39 @@ int main(int argc, char const* argv[]){
 
   // Creating a new socket ( mirroring to send or recive data after accepting the connection request from the client)
   
-  if((new_socket = accept(socket_fd, (struct sockaddr*)&address, (socklen_t*)&addr_len))<0){
-    perror("Aceept failed");
-    exit(EXIT_FAILURE);
-  }
+     printf("\nServer has started and is waiting for connections...\n");
 
-  while(new_socket > 0){
+    if ((new_socket = accept(socket_fd, (struct sockaddr*)&address, (socklen_t*)&addr_len)) < 0) {
+        perror("Accept failed");
+        exit(EXIT_FAILURE);
+    }
 
-    printf("/n Sever has been connected at port %d\n",PORT);
-    valread = read(new_socket, buffer, 1024);
-    printf("%s\n",buffer);
-  
-    char* server;
-    printf("Enter the message you want to send");
-    scanf("%s",server);
+    printf("Server is connected to a client on port %d\n", PORT);
 
+    while (1) {
+        
+        char* server_message;
 
-    send(new_socket,server,strlen(server), 0);
+        printf("Enter the message you want to send (type 'exit' to quit): ");
+        fgets(server_message,sizeof(buffer), stdin);
 
-    printf("Server message sent");
-  }
+        server_message[strcspn(server_message, "\n")] = '\0'; // Removing newline character from fgets
 
+        if (strcmp(server_message, "exit") == 0) {
+            printf("Server is exiting...\n");
+            break;
+        }
+
+        send(new_socket, server_message, strlen(server_message), 0);
+
+        valread = read(new_socket, buffer, 0);
+        buffer[valread] = '\0'; // Null-terminate the received buffer before printing
+        printf("Client: %s\n", buffer);
+    }
+
+    // Close sockets
+    close(new_socket);
+    close(socket_fd);
 
   return 0;
 
